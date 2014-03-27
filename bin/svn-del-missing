@@ -1,0 +1,5 @@
+#!/bin/sh
+
+svn del --force \
+    `svn status | awk '/^\!/{print $NF}'` \
+${1+"$@"}

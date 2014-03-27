@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Written by Karolis Uziela in 2013
+
+if [ $# != 1 ] ; then
+    echo "
+Usage: 
+
+$0 [Parameters]
+
+Parameters:
+<text> - text to echo
+
+"
+    exit 1
+fi
+
+text=$1
+
+echo $text 1>&2

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Written by Karolis Uziela in 2012
+
+if [ $# != 2 ] ; then
+    echo "
+Usage: 
+
+$0 [Parameters]
+
+Parameters:
+<log-name> - basename for log files
+<command> - command you want to execute (enclosed in quotes)
+
+"
+    exit 1
+fi
+
+logname=$1
+cmd=$2
+
+`$cmd >$logname.log 2>$logname.err`

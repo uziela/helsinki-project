@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Written by Karolis Uziela in 2012
+
+ls --color=always $1 | head -n 25
