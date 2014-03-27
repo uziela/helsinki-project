@@ -1,0 +1,75 @@
+cargs <- commandArgs(trailingOnly = TRUE)
+array_expr_means_file <- cargs[1]
+input_path <- cargs[2]
+prebsFile <- cargs[3]
+mmseqFile <- cargs[4]
+rpkmFile <- cargs[5]
+run_name <- cargs[6]
+
+
+load(array_expr_means_file)
+
+array_expr_means <- array_expr_means[,colnames(array_expr_means)==run_name]
+array_expr_means <- data.frame(Gene_ID=names(array_expr_means), array_expr=array_expr_means)
+
+#head(array_expr_means)
+
+load(prebsFile)
+
+# Load PREBS
+
+merged <- merge(gene_expr, array_expr_means)
+
+#merged <- merged[is.finite(merged$PREBS_mean),]
+
+#merged <- merged[is.finite(merged$PREBS_median),]
+
+
+
+# Load mmseq
+mmseq <- read.csv(mmseqFile, sep = "\t", comment.char = "#")
+
+mmseq_clean <- data.frame(Gene_ID=mmseq$gene_id, mmseq_expr=mmseq$log_mu_gibbs)
+
+#mmseq_clean <- mmseq_clean[!is.na(mmseq_clean$mmseq_expr),]
+
+mmseq_clean$mmseq_expr <- mmseq_clean$mmseq_expr / log(2)	# convert to log2 base (from natural base)
+
+merged <- merge(merged, mmseq_clean, all.x=TRUE) 
+
+
+# Load RPKM
+
+load(rpkmFile)
+
+rpkm_table <- data.frame(Gene_ID=names(rpkm), RPKM=rpkm)
+
+#rpkm_table <- rpkm_table[rpkm_table$RPKM != 0,]
+
+rpkm_table$RPKM <- log2(rpkm_table$RPKM)
+
+merged <- merge(merged, rpkm_table, all.x=TRUE) 
+
+# Filter
+
+#merged <- merged[merged$mmseq_expr >= log2(0.3),]
+#merged <- merged[merged$RPKM >= log2(0.3),]
+#merged <- merged[merged$PREBS_mean >= log2(0.3),]
+
+# Save merged file
+
+save(merged, file=paste(input_path,"/","merged.RData",sep=""))
+
+# Plot
+
+#plot_path <- paste(input_path,"/plots", sep="")
+
+#my_plot(merged$PREBS_mean, merged$array_expr, paste(plot_path,"/",run_name,"_PREBS_mean_vs_array.png", sep=""), "PREBS_mean value", "Microarray expression")
+
+#my_plot(merged$PREBS_median, merged$array_expr, paste(plot_path,"/",run_name,"_PREBS_median_vs_array.png", sep=""), "PREBS_median value", "Microarray expression")
+
+#my_plot(merged$mmseq_expr, merged$array_expr, paste(plot_path,"/",run_name,"_mmseq_vs_array.png", sep=""), "MMseq expression (log2 scale)", "Microarray expression")
+
+#my_plot(merged$RPKM, merged$array_expr, paste(plot_path,"/",run_name,"_RPKM_vs_array.png", sep=""), "RPKM (log2 scale)", "Microarray expression")
+
+
