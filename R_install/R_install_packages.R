@@ -1,0 +1,8 @@
+source("http://www.bioconductor.org/biocLite.R")
+biocLite("GenomicRanges")
+biocLite("GenomicFeatures")
+biocLite("DESeq")
+biocLite("affy")
+biocLite("limma")
+biocLite("Rsamtools")
+biocLite("gplots")

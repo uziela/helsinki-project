@@ -1,0 +1,91 @@
+#!/usr/bin/perl -w
+
+# 2011 (C) Karolis Uziela, karolis.uziela@cs.helsinki.fi
+# Antti Honkela group
+# University of Helsinki
+# Helsinki, Finland
+
+# Script description:
+# N/A
+
+
+use strict;
+
+if ($#ARGV != 2) {
+	die "
+Usage:
+
+$0 [Parameters]
+
+Parameters:
+  <input-file1> - input file with rankings
+  <input-file2> - input file with converted ids by DAVID software
+  <output-file> - output file with replaced ids
+\n";
+}
+
+# input files/directories	
+my $INPUT_FILE1 = $ARGV[0];
+my $INPUT_FILE2 = $ARGV[1];
+
+# output files/directories
+my $OUTPUT_FILE = $ARGV[2];
+
+# constants
+# N/A
+
+# global variables
+my %ranks;
+
+###################### main script ######################
+
+print "$0 has started with parameters: @ARGV\n";
+
+read_ranks($INPUT_FILE1);
+replace_ids($INPUT_FILE2, $OUTPUT_FILE);
+
+print "$0 done.\n";
+
+###################### subroutines ######################
+
+sub read_ranks {
+	my $input_file = $_[0];
+	open(IN_FILE, "$input_file") or die "Error occured opening input file '$input_file': $!";
+
+	while (my $line=<IN_FILE>) {
+		chomp $line;
+		my @bits = split(/\t/, $line);
+		my $geneid = $bits[0];
+		my $rank = $bits[1];
+		$ranks{$geneid} = $rank;
+	}
+
+	close(IN_FILE) or die "Error occured closing input file: $!";
+}
+
+sub replace_ids {
+	my $input_file = $_[0];
+	my $output_file = $_[1];
+	open(IN_FILE, "$input_file") or die "Error occured opening input file '$input_file': $!";
+	open(OUT_FILE,">$output_file") or die "Error occured opening output file: '$output_file': $!";
+
+	while (my $line=<IN_FILE>) {
+		chomp $line;
+		my @bits = split(/\t/, $line);
+		my $geneid = $bits[0];
+		my $new_geneid = $bits[1];
+		die "ERROR: $geneid does not exist." if (!defined $ranks{$geneid});
+		my $rank = $ranks{$geneid};
+		print OUT_FILE "$new_geneid\t$rank\n";
+	}
+
+	close(IN_FILE) or die "Error occured closing input file: $!";
+	close(OUT_FILE) or die "Error occured closing output file: $!";
+}
+
+sub write_file {
+	my $output_file = $_[0];
+	open(OUT_FILE,">$output_file") or die "Error occured opening output file: '$output_file': $!";
+	
+	close(OUT_FILE) or die "Error occured closing output file: $!";
+}
