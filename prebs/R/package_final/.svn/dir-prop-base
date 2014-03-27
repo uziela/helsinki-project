@@ -1,0 +1,9 @@
+K 10
+svn:ignore
+V 45
+*.RData
+..Rcheck
+cdf-manufacturer
+cdf-custom
+
+END

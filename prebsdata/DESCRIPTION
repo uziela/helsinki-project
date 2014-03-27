@@ -1,0 +1,12 @@
+Package: prebsdata
+Title: Data for 'prebs' package
+Description: This package contains data required to run examples in 'prebs' package. 
+    The data files include:
+    1) Small sample bam files for demonstration purposes 
+    2) Probe sequence mappings for Custom CDF (taken from http://brainarray.mbni.med.umich.edu/brainarray/Database/CustomCDF/genomic_curated_CDF.asp)
+    3) Probe sequence mappings for manufacturer's CDF (manually created using bowtie)
+Version: 0.99.0
+Author: Karolis Uziela and Antti Honkela
+Maintainer: Karolis Uziela <karolis.uziela@scilifelab.se>
+Depends: R (>= 2.14.0)
+License: Artistic-2.0

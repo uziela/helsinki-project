@@ -1,0 +1,100 @@
+\name{calc_prebs}
+\alias{calc_prebs}
+\title{Calculate PREBS values}
+\usage{
+  calc_prebs(bam_files, probe_mapping_file,
+    cdf_name = NULL, cluster = NULL, output_eset = TRUE)
+}
+\arguments{
+  \item{bam_files}{A vector containing .bam files.}
+
+  \item{probe_mapping_file}{A file containing probe
+  mappings in the genome.}
+
+  \item{cdf_name}{A name of CDF package to use in RMA
+  algorithm. If cdf_name=NULL, the package name is inferred
+  from the name of probe_mapping_file
+  ("HGU133Plus2_Hs_ENSG_mapping.txt" ->
+  "hgu133plus2hsensgcdf")}
+
+  \item{cluster}{A cluster object created using
+  "makeCluster" function from "parellel" package. If
+  cluster=NULL, no parallelization is used.}
+
+  \item{output_eset}{If set to TRUE, the output of
+  \code{calc_prebs} will be ExpressionSet object.
+  Otherwise, the output will be a data frame.}
+}
+\value{
+  ExpressionSet object or a data frame containing PREBS
+  values
+}
+\description{
+  \code{calc_prebs} calculates PREBS values for given set
+  of BAM files.
+}
+\details{
+  \code{calc_prebs} is the main function of \code{prebs}
+  package that implements the whole pipeline. The function
+  takes mapped reads in BAM format and probe sequence
+  mappings as an input. The output depends on
+  \code{output_eset} option. If \code{output_eset=TRUE}
+  then \code{calc_prebs} returns ExpressionSet object
+  (ExpressionSet object is defined in \code{affy} package).
+  Otherwise it returns a data frame containing PREBS
+  values.
+
+  For running \code{calc_prebs} with custom CDF, the custom
+  CDF package has to be downloaded and installed from
+  Custom CDF website:
+  http://brainarray.mbni.med.umich.edu/CustomCDF
+
+  For running \code{calc_prebs} with manufacturer's CDF,
+  the manufacturer's CDF package can be installed from
+  Bioconductor, for example: biocLite("GenomicRanges");
+  biocLite("hgu133plus2cdf")
+
+  For a detailed input specification, please refer to the
+  \code{prebs} vignette.
+}
+\examples{
+if (require(prebsdata)) {
+  # Get full paths to data files in \\code{prebsdata} package
+  bam_file1 <- system.file(file.path("sample_bam_files", "input1.bam"), package="prebsdata")
+  bam_file2 <- system.file(file.path("sample_bam_files", "input2.bam"), package="prebsdata")
+  bam_files <- c(bam_file1, bam_file2)
+  custom_cdf_mapping1 <- system.file(file.path("custom-cdf", "HGU133Plus2_Hs_ENSG_mapping.txt"),
+                                     package="prebsdata")
+  custom_cdf_mapping2 <- system.file(file.path("custom-cdf", "HGU133A2_Hs_ENSG_mapping.txt"),
+                                     package="prebsdata")
+  manufacturer_cdf_mapping <- system.file(file.path("manufacturer-cdf", "HGU133Plus2_mapping.txt"),
+                                          package="prebsdata")
+  if (interactive()) {
+    # Run PREBS using custom CDF without parallelization
+    prebs_values <- calc_prebs(bam_files, custom_cdf_mapping1)
+    head(exprs(prebs_values))
+
+    # Run PREBS using custom CDF with parallelization
+    library(parallel)
+    N_CORES = 2
+    CLUSTER <- makeCluster(N_CORES)
+    prebs_values <- calc_prebs(bam_files, custom_cdf_mapping1, cluster=CLUSTER)
+    stopCluster(CLUSTER)
+
+    # Run PREBS using another custom CDF
+    prebs_values <- calc_prebs(bam_files, custom_cdf_mapping2)
+
+    # Run PREBS and return data frame instead of ExpressionSet object
+    prebs_values <- calc_prebs(bam_files, custom_cdf_mapping1, output_eset=FALSE)
+    head(prebs_values)
+  }
+
+  # Run PREBS using Manufacturer's CDF (outputs probe set expressions)
+  prebs_values <- calc_prebs(bam_files, manufacturer_cdf_mapping)
+  head(exprs(prebs_values))
+
+  # Same as above, but state CDF package name explicitly
+  prebs_values <- calc_prebs(bam_files, manufacturer_cdf_mapping, cdf_name="hgu133plus2cdf")
+}
+}
+

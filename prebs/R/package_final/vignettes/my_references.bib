@@ -1,0 +1,228 @@
+@ARTICLE{dai2005,
+  author = {Manhong Dai and Pinglang Wang and Andrew D Boyd and Georgi Kostov
+	and Brian Athey and Edward G Jones and William E Bunney and Richard
+	M Myers and Terry P Speed and Huda Akil and Stanley J Watson and
+	Fan Meng},
+  title = {{E}volving gene/transcript definitions significantly alter the interpretation
+	of {G}ene{C}hip data.},
+  journal = {Nucleic Acids Res},
+  year = {2005},
+  volume = {33},
+  pages = {e175},
+  number = {20},
+  abstract = {Genome-wide expression profiling is a powerful tool for implicating
+	novel gene ensembles in cellular mechanisms of health and disease.
+	The most popular platform for genome-wide expression profiling is
+	the Affymetrix GeneChip. However, its selection of probes relied
+	on earlier genome and transcriptome annotation which is significantly
+	different from current knowledge. The resultant informatics problems
+	have a profound impact on analysis and interpretation the data. Here,
+	we address these critical issues and offer a solution. We identified
+	several classes of problems at the individual probe level in the
+	existing annotation, under the assumption that current genome and
+	transcriptome databases are more accurate than those used for GeneChip
+	design. We then reorganized probes on more than a dozen popular GeneChips
+	into gene-, transcript- and exon-specific probe sets in light of
+	up-to-date genome, cDNA/EST clustering and single nucleotide polymorphism
+	information. Comparing analysis results between the original and
+	the redefined probe sets reveals approximately 30-50\% discrepancy
+	in the genes previously identified as differentially expressed, regardless
+	of analysis method. Our results demonstrate that the original Affymetrix
+	probe set definitions are inaccurate, and many conclusions derived
+	from past GeneChip analyses may be significantly flawed. It will
+	be beneficial to re-analyze existing GeneChip data with updated probe
+	set definitions.},
+  doi = {10.1093/nar/gni179},
+  howpublished = {\url{http://dx.doi.org/10.1093/nar/gni179}},
+  institution = {Molecular and Behavioural Neuroscience Institute and Department of
+	Psychiatry, University of Michigan, Ann Arbor, MI 48109, USA.},
+  keywords = {Alleles; Animals; Cluster Analysis; Databases, Nucleic Acid; Exons;
+	Gene Expression Profiling; Humans; Mice; Oligonucleotide Array Sequence
+	Analysis; Oligonucleotide Probes; Rats; Reproducibility of Results;
+	Transcription, Genetic},
+  language = {eng},
+  medline-pst = {epublish},
+  owner = {uziela},
+  pii = {33/20/e175},
+  pmid = {16284200},
+  timestamp = {2012.06.04}
+}
+
+@ARTICLE{trapnell2009,
+  author = {Cole Trapnell and Lior Pachter and Steven L Salzberg},
+  title = {{T}op{H}at: discovering splice junctions with {RNA}-{S}eq.},
+  journal = {Bioinformatics},
+  year = {2009},
+  volume = {25},
+  pages = {1105--1111},
+  number = {9},
+  month = {May},
+  abstract = {A new protocol for sequencing the messenger RNA in a cell, known as
+	RNA-Seq, generates millions of short sequence fragments in a single
+	run. These fragments, or 'reads', can be used to measure levels of
+	gene expression and to identify novel splice variants of genes. However,
+	current software for aligning RNA-Seq data to a genome relies on
+	known splice junctions and cannot identify novel ones. TopHat is
+	an efficient read-mapping algorithm designed to align reads from
+	an RNA-Seq experiment to a reference genome without relying on known
+	splice sites.We mapped the RNA-Seq reads from a recent mammalian
+	RNA-Seq experiment and recovered more than 72\% of the splice junctions
+	reported by the annotation-based software from that study, along
+	with nearly 20,000 previously unreported junctions. The TopHat pipeline
+	is much faster than previous systems, mapping nearly 2.2 million
+	reads per CPU hour, which is sufficient to process an entire RNA-Seq
+	experiment in less than a day on a standard desktop computer. We
+	describe several challenges unique to ab initio splice site discovery
+	from RNA-Seq reads that will require further algorithm development.TopHat
+	is free, open-source software available from http://tophat.cbcb.umd.edu.Supplementary
+	data are available at Bioinformatics online.},
+  doi = {10.1093/bioinformatics/btp120},
+  howpublished = {\url{http://dx.doi.org/10.1093/bioinformatics/btp120}},
+  institution = {Center for Bioinformatics and Computational Biology, University of
+	Maryland, College Park, MD 20742, USA. cole@cs.umd.edu},
+  keywords = {Algorithms; Gene Expression Profiling, methods; Models, Genetic; RNA
+	Splicing, genetics; RNA, Messenger; Sequence Alignment; Sequence
+	Analysis, RNA; Software},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {uziela},
+  pii = {btp120},
+  pmid = {19289445},
+  timestamp = {2012.06.04}
+}
+
+@ARTICLE{irizarry2003,
+  author = {Rafael A Irizarry and Bridget Hobbs and Francois Collin and Yasmin
+	D Beazer-Barclay and Kristen J Antonellis and Uwe Scherf and Terence
+	P Speed},
+  title = {{E}xploration, normalization, and summaries of high density oligonucleotide
+	array probe level data.},
+  journal = {Biostatistics},
+  year = {2003},
+  volume = {4},
+  pages = {249--264},
+  number = {2},
+  month = {Apr},
+  abstract = {In this paper we report exploratory analyses of high-density oligonucleotide
+	array data from the Affymetrix GeneChip system with the objective
+	of improving upon currently used measures of gene expression. Our
+	analyses make use of three data sets: a small experimental study
+	consisting of five MGU74A mouse GeneChip arrays, part of the data
+	from an extensive spike-in study conducted by Gene Logic and Wyeth's
+	Genetics Institute involving 95 HG-U95A human GeneChip arrays; and
+	part of a dilution study conducted by Gene Logic involving 75 HG-U95A
+	GeneChip arrays. We display some familiar features of the perfect
+	match and mismatch probe (PM and MM) values of these data, and examine
+	the variance-mean relationship with probe-level data from probes
+	believed to be defective, and so delivering noise only. We explain
+	why we need to normalize the arrays to one another using probe level
+	intensities. We then examine the behavior of the PM and MM using
+	spike-in data and assess three commonly used summary measures: Affymetrix's
+	(i) average difference (AvDiff) and (ii) MAS 5.0 signal, and (iii)
+	the Li and Wong multiplicative model-based expression index (MBEI).
+	The exploratory data analyses of the probe level data motivate a
+	new summary measure that is a robust multi-array average (RMA) of
+	background-adjusted, normalized, and log-transformed PM values. We
+	evaluate the four expression summary measures using the dilution
+	study data, assessing their behavior in terms of bias, variance and
+	(for MBEI and RMA) model fit. Finally, we evaluate the algorithms
+	in terms of their ability to detect known levels of differential
+	expression using the spike-in data. We conclude that there is no
+	obvious downside to using RMA and attaching a standard error (SE)
+	to this quantity using a linear model which removes probe-specific
+	affinities.},
+  doi = {10.1093/biostatistics/4.2.249},
+  howpublished = {\url{http://dx.doi.org/10.1093/biostatistics/4.2.249}},
+  institution = {Department of Biostatistics, Johns Hopkins University, Baltimore,
+	MD 21205, USA. rafa@jhu.edu},
+  keywords = {Algorithms; Animals; DNA Probes, genetics; Data Interpretation, Statistical;
+	Gene Expression Profiling, statistics /&/ numerical data; Humans;
+	Linear Models; Mice; Normal Distribution; Oligonucleotide Array Sequence
+	Analysis, methods; Reproducibility of Results; Statistics, Nonparametric},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {uziela},
+  pii = {4/2/249},
+  pmid = {12925520},
+  timestamp = {2012.06.04}
+}
+
+@ARTICLE{Uziela2013,
+  author = {Karolis Uziela and Antti Honkela},
+  title = {Probe region expression estimation for RNA-seq data for improved
+	microarray comparability},
+  year = {2013},
+  month = apr,
+  note = {arXiv:1304.1698 [q-bio.GN]}
+}
+
+@ARTICLE{Gautier2004,
+  author = {Laurent Gautier and Leslie Cope and Benjamin M Bolstad and Rafael
+	A Irizarry},
+  title = {affy--analysis of Affymetrix GeneChip data at the probe level.},
+  journal = {Bioinformatics},
+  year = {2004},
+  volume = {20},
+  pages = {307--315},
+  number = {3},
+  month = {Feb},
+  abstract = {MOTIVATION: The processing of the Affymetrix GeneChip data has been
+	a recent focus for data analysts. Alternatives to the original procedure
+	have been proposed and some of these new methods are widely used.
+	RESULTS: The affy package is an R package of functions and classes
+	for the analysis of oligonucleotide arrays manufactured by Affymetrix.
+	The package is currently in its second release, affy provides the
+	user with extreme flexibility when carrying out an analysis and make
+	it possible to access and manipulate probe intensity data. In this
+	paper, we present the main classes and functions in the package and
+	demonstrate how they can be used to process probe-level data. We
+	also demonstrate the importance of probe-level analysis when using
+	the Affymetrix GeneChip platform.},
+  doi = {10.1093/bioinformatics/btg405},
+  institution = {Center for Biological Sequence Analysis (CBS), Technical University
+	of Denmark, Building 208, 2800 Lyngby, Denmark. laurent@cbs.dtu.dk},
+  keywords = {Algorithms; DNA Probes, chemistry; Databases, Bibliographic; Databases,
+	Genetic; Gene Expression Profiling, instrumentation/methods; Information
+	Storage and Retrieval, methods; Oligonucleotide Array Sequence Analysis,
+	instrumentation/methods; Sequence Alignment, methods; Sequence Analysis,
+	DNA, methods; Software; User-Computer Interface},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {ahonkela},
+  pii = {20/3/307},
+  pmid = {14960456},
+  timestamp = {2013.01.15},
+  url = {http://dx.doi.org/10.1093/bioinformatics/btg405}
+}
+
+@ARTICLE{langmead2009,
+  author = {Ben Langmead and Cole Trapnell and Mihai Pop and Steven L Salzberg},
+  title = {{U}ltrafast and memory-efficient alignment of short {DNA} sequences
+	to the human genome.},
+  journal = {Genome Biol},
+  year = {2009},
+  volume = {10},
+  pages = {R25},
+  number = {3},
+  abstract = {Bowtie is an ultrafast, memory-efficient alignment program for aligning
+	short DNA sequence reads to large genomes. For the human genome,
+	Burrows-Wheeler indexing allows Bowtie to align more than 25 million
+	reads per CPU hour with a memory footprint of approximately 1.3 gigabytes.
+	Bowtie extends previous Burrows-Wheeler techniques with a novel quality-aware
+	backtracking algorithm that permits mismatches. Multiple processor
+	cores can be used simultaneously to achieve even greater alignment
+	speeds. Bowtie is open source (http://bowtie.cbcb.umd.edu).},
+  doi = {10.1186/gb-2009-10-3-r25},
+  howpublished = {\url{http://dx.doi.org/10.1186/gb-2009-10-3-r25}},
+  institution = {Center for Bioinformatics and Computational Biology, Institute for
+	Advanced Computer Studies, University of Maryland, College Park,
+	MD 20742, USA. langmead@cs.umd.edu},
+  keywords = {Algorithms; Base Sequence; Genome, Human, genetics; Humans; Sequence
+	Alignment, methods},
+  language = {eng},
+  medline-pst = {ppublish},
+  owner = {uziela},
+  pii = {gb-2009-10-3-r25},
+  pmid = {19261174},
+  timestamp = {2012.06.04}
+}

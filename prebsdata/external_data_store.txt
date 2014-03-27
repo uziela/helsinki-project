@@ -1,0 +1,3 @@
+inst/sample_bam_files
+inst/manufacturer-cdf
+inst/custom-cdf

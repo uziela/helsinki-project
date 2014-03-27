@@ -1,0 +1,31 @@
+%\VignetteIndexEntry{prebsdata User Guide}
+%\VignetteKeywords{RNA-sequencing, gene expression microarrays, comparability}
+%\VignetteDepends{}
+%\VignettePackage{prebsdata}
+\documentclass[a4paper]{article}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\title{prebsdata User Guide}
+\author{Karolis Uziela, Antti Honkela}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\prebs}{\Rpackage{prebs}}
+\newcommand{\prebsdata}{\Rpackage{prebsdata}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\maketitle
+\SweaveOpts{keep.source=TRUE}
+
+\section{Abstract}
+
+This is a simple data package for \Rpackage{prebs} package. For more information, please, refer to \Rpackage{prebs} vignette.
+
+\end{document}

@@ -1,0 +1,303 @@
+%\VignetteIndexEntry{prebs User Guide}
+%\VignetteKeywords{RNA-sequencing, gene expression microarrays, comparability}
+%\VignetteDepends{Rsamtools, GenomicRanges, affy, methods, stats, IRanges, hgu133plus2cdf}
+%\VignettePackage{prebs}
+\documentclass[a4paper]{article}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+
+\title{prebs User Guide}
+\author{Karolis Uziela, Antti Honkela}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\prebs}{\Rpackage{prebs}}
+\newcommand{\prebsdata}{\Rpackage{prebsdata}}
+\newcommand{\calcprebs}{\Rfunction{calc\_prebs}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\maketitle
+\SweaveOpts{keep.source=TRUE}
+
+\section{Abstract}
+
+The \prebs{} package aims at making RNA-sequencing (RNA-seq) data more comparable to microarray data. The comparability is achieved by summarizing sequencing-based expressions of probe regions using a modified version of RMA algorithm \citep{irizarry2003}. The pipeline takes mapped reads in BAM format as an input and produces either gene expressions or original microarray probe set expressions as an output. A more detailed algorithm description can be found in \citep{Uziela2013}.
+
+\section{Installation}
+\label{section:Installation}
+
+\prebs{} can be installed from the the bioconductor using \Rfunction{biocLite} function. This ensures that all of the package dependencies are met.
+
+<< eval=FALSE >>=
+source("http://www.bioconductor.org/biocLite.R")
+biocLite("prebs")
+@
+
+\prebsdata{} package that is needed to run the examples in this vignette is also available from the bioconductor.
+
+<< eval=FALSE >>=
+source("http://www.bioconductor.org/biocLite.R")
+biocLite("prebsdata")
+@
+
+\section{Examples}
+\label{section:Examples}
+
+Here we will cover a few simple examples of running \prebs{} in two modes: Custom CDF and manufacturer's CDF. The major difference between these two modes is that Custom CDF gives expression values for genes while manufacturer's CDF gives the expression values for the probe sets.
+
+\subsection{Loading package and data}
+To load the package start R and run
+<<>>=
+library(prebs)
+@ 
+
+The data for our examples is contained in \Rpackage{prebsdata} package. The data package contains two sample BAM files, 3 Custom CDF probe sequence mapping files and 3 manufacturer's CDF probe sequence mapping files. We will use only 2 Custom CDF and 1 manufacturer's CDF probe sequence mapping file in our examples.
+
+The full paths to data files in the \Rpackage{prebsdata} package can be retrieved using \Rfunction{system.file} function.
+
+<<>>=
+bam_file1 <- system.file(file.path("sample_bam_files", "input1.bam"), 
+                         package="prebsdata")
+bam_file2 <- system.file(file.path("sample_bam_files", "input2.bam"), 
+                         package="prebsdata")
+bam_files <- c(bam_file1, bam_file2)
+custom_cdf_mapping1 <- system.file(file.path("custom-cdf", 
+    "HGU133Plus2_Hs_ENSG_mapping.txt"), package="prebsdata")
+custom_cdf_mapping2 <- system.file(file.path("custom-cdf", 
+    "HGU133A2_Hs_ENSG_mapping.txt"), package="prebsdata")
+manufacturer_cdf_mapping <- system.file(file.path("manufacturer-cdf", 
+    "HGU133Plus2_mapping.txt"), package="prebsdata")
+@ 
+
+\subsection{Running \calcprebs{} using Custom CDF}
+The \prebs{} package contains only one public function---\calcprebs{}. The most basic usage of \calcprebs{} is running it in Custom CDF mode without parallelization. The default output format of \calcprebs{} is ExpressionSet object defined in \Rpackage{affy} package. The expression values can be accessed using \Rfunction{exprs} function from \Rpackage{affy} package.
+
+\begin{Schunk}
+\begin{Sinput}
+> prebs_values <- calc_prebs(bam_files, custom_cdf_mapping1)
+\end{Sinput}
+\begin{Soutput}
+Normalizing
+Calculating Expression
+\end{Soutput}
+\begin{Sinput}
+> head(exprs(prebs_values))
+\end{Sinput}
+\begin{Soutput}
+                input1.bam input2.bam
+ENSG00000000003   4.480645   4.035863
+ENSG00000000005 -13.313919 -13.313919
+ENSG00000000419   4.224720   4.224720
+ENSG00000000457   2.611877   4.196825
+ENSG00000000460   2.111514   2.300766
+ENSG00000000938   2.325804   5.073020
+\end{Soutput}
+\end{Schunk}
+
+Above we can see the expressions of the first few genes with Ensembl gene identifiers. In this example, the expression level of at least one of the genes is negligible (the expression values are in log$_2$ scale). In fact, most of the other genes that are not shown here also have a negligible expression level, because we designed our sample BAM files so that they contain only mapped reads from the region of the first few genes. Of course, for a real world analysis mapped reads from all of the genes are needed. However, real world BAM files take a lot of disk space, so it was not possible to include them in the sample data set.
+
+Since in this case we did not provide explicit CDF package name, the name was inferred from the probe sequence mapping filename ("\texttt{custom-cdf/HGU133Plus2\_Hs\_ENSG\_mapping.txt}" -> \Rpackage{hgu133plus2hsensgcdf}). Both probe sequence mapping file and custom CDF package can be downloaded from Custom CDF website: \\
+\url{http://brainarray.mbni.med.umich.edu/brainarray/Database/CustomCDF/genomic_curated_CDF.asp}
+
+In particular, this example uses Ensembl custom CDF package for and \texttt{HGU133Plus2} platform (version 16.0.0) that can be dowloaded here:
+\url{http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/16.0.0/ensg.download/hgu133plus2hsensgcdf_16.0.0.tar.gz}
+
+And the corresponding description archive containing probe sequence mapping file can be downloaded here:\\
+\url{http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/16.0.0/ensg.download/HGU133Plus2_Hs_ENSG_16.0.0.zip}
+
+\subsection{Setting \calcprebs{} output format to a data frame}
+
+By default \calcprebs{} outputs an ExpressionSet object with PREBS values. If you prefer to have a data frame as an output, you can set \texttt{output\_eset} option to FALSE.
+
+\begin{Schunk}
+\begin{Sinput}
+> prebs_values <- calc_prebs(bam_files, custom_cdf_mapping1, output_eset=FALSE)
+\end{Sinput}
+\begin{Soutput}
+Normalizing
+Calculating Expression
+\end{Soutput}
+\begin{Sinput}
+> head(prebs_values)
+\end{Sinput}
+\begin{Soutput}
+  input1.bam input2.bam              ID
+1   4.480645   4.035863 ENSG00000000003
+2 -13.313919 -13.313919 ENSG00000000005
+3   4.224720   4.224720 ENSG00000000419
+4   2.611877   4.196825 ENSG00000000457
+5   2.111514   2.300766 ENSG00000000460
+6   2.325804   5.073020 ENSG00000000938
+\end{Soutput}
+\end{Schunk}
+
+\subsection{Running \calcprebs{} with parallelization}
+Now let's run the same task with a simple parallelization. The results will be identical to the ones above.
+<< eval=FALSE >>=
+library("parallel")
+N_CORES = 2
+CLUSTER <- makeCluster(N_CORES)
+prebs_values <- calc_prebs(bam_files, custom_cdf_mapping1, cluster=CLUSTER)
+stopCluster(CLUSTER)
+@
+
+\subsection{Running \calcprebs{} for another microarray platform}
+If we want to run \calcprebs{} with a different microarray platform, we just have to provide another probe sequence mapping file. 
+
+<< eval=FALSE >>=
+prebs_values <- calc_prebs(bam_files, custom_cdf_mapping2)
+@
+
+The corresponding Custom CDF package \Rpackage{hgu133a2hsensgcdf} has to be downloaded and installed prior to running this command. It can be found here:\\
+\url{http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/16.0.0/ensg.download/hgu133a2hsensgcdf_16.0.0.tar.gz}
+
+\subsection{Running \calcprebs{} using manufacturer's CDF}
+Running \calcprebs{} with manufacturer's CDF is not so much different either. All we have to do is to provide a suitably formatted probe sequence mapping file.
+
+<<>>=
+prebs_values <- calc_prebs(bam_files, manufacturer_cdf_mapping)
+head(exprs(prebs_values))
+@
+
+As mentioned before, manufacturer's CDF mode gives probe set expressions as an output. In the above example, you can see the the expression values for the first few probe sets of our example data set.
+
+One problem with running \calcprebs{} using manufacturer's CDF is that Affymetrix does not provide probe sequence mappings for most of the microarray platforms. Therefore, probe sequence mapping files have to be created manually, as it will be discussed in Section~\ref{section:Input}.
+
+As in Custom CDF case, the CDF package name is inferred from probe sequence mapping file ("\texttt{custom-cdf/HGU133Plus2\_mapping.txt}" -> \Rpackage{hgu133plus2cdf}). If we are not sure if the mapping file is named correctly, it is better to provide CDF package filename explicitly.
+
+<< eval=FALSE >>=
+prebs_values <- calc_prebs(bam_files, manufacturer_cdf_mapping, 
+                           cdf_name="hgu133plus2cdf")
+@
+
+Now we have presented pretty much all important ways of running \calcprebs{} function. From this point, you can proceed with downstream analysis of \calcprebs{} results. However, so far we have left out some important details about input requirements of \calcprebs{} function that will be discussed in the next section.
+
+\section{Detailed input specification}
+\label{section:Input}
+
+The main function of the package \calcprebs{} has the following input arguments:
+
+\begin{enumerate}
+  \item Mapped reads in BAM format.
+  \item Probe sequence mappings in a genome ("\texttt{*cdfname*\_mapping.txt}" file) and the name of CDF package (optional). If the name of CDF package is not given, it is inferred from the filename containing probe sequence mappings.
+  \item Cluster object for parallelization (optional)
+\end{enumerate}
+
+In this section we will discuss all the input requirements in more detail.
+
+\subsection{BAM files}
+
+For using \calcprebs{} function you will need to have mapped reads in BAM format. For read mapping we recommend using TopHat software \citep{trapnell2009}. We suggest to align the reads only to the known transcriptome. You can do this by using \texttt{-{}-transcriptome-only} option and supplying your own transcriptome annotation file via \texttt{-{}-GTF} option. Transcriptome annotation files can be downloaded from Ensembl \href{http://www.ensembl.org/info/data/ftp/index.html}{FTP server}. Finally, we require that reads are mapped to no more than 1 location in the genome. This can be achieved by using option \texttt{-{}-max-multihits 1}. So for human genome, sample TopHat run could look like this:
+
+\begin{verbatim}
+tophat --transcriptome-only --max-multihits 1 \
+--GTF ./Human_transcriptome/Homo_sapiens.GRCh37.65.gtf \ 
+--transcriptome-index=./Human_transcriptome/known \
+--output-dir ./tophat-out hg19 input1.fastq input2.fastq
+\end{verbatim}
+
+\subsection{Probe sequence mappings and CDF packages}
+
+\calcprebs{} function can be used in two modes: Custom CDF \citep{dai2005} and manufacturer's CDF. Custom CDF mode produces gene expressions while manufacturer's CDF mode produces original probe set expressions. Now we will discuss the input requirements for the two modes in more detail.
+
+\subsubsection{Custom CDF}
+As we have already mentioned \calcprebs{} function requires a probe sequence mapping file and CDF package name as its arguments. For Custom CDF mode, both the mapping file and the package can be downloaded from the Custom CDF website:\\
+\url{http://brainarray.mbni.med.umich.edu/brainarray/Database/CustomCDF/genomic_curated_CDF.asp}
+
+The Custom CDF supports many types of gene identifiers, but in our examples we are using Custom CDF files with Ensembl gene identifiers (version 16.0.0). In the Custom CDF \href{http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/16.0.0/ensg.asp}{download page} for each microarray platform you can find both the the Custom CDF package file (denoted by "C") and the Custom CDF description archive (denoted by "O") containing the probe sequence mapping file. 
+
+The Custom CDF package can be installed like a regular R package (using R CMD INSTALL command). For example, to install hgu133plus2hsensgcdf in Unix-like systems type R CMD INSTALL hgu133plus2hsensgcdf\_16.0.0.tar.gz.
+
+The probe sequence mapping file is named as "\texttt{*cdfname*\_mapping.txt}". Since CDF package name can be inferred from probe sequence mapping filename, explicitly providing CDF package name to \calcprebs{} function is optional. For example, if you are using "\verb+HGU133Plus2_Hs_ENSG_mapping.txt+" probe sequence mapping file do not provide CDF package name, it is assumed that \Rpackage{hgu133plus2hsensgcdf} package is used.
+
+\subsubsection{Manufacturer's CDF}
+The manufacturer's CDF packages can be downloaded and installed from the bioconductor. For example, to install CDF package for \texttt{HGU133Plus2} platform, type:
+
+<< eval=FALSE >>==
+source("http://www.bioconductor.org/biocLite.R")
+biocLite("hgu133plus2cdf")
+@
+
+Unfortunately, probe sequence mapping files are not provided for most of the microarray platforms. For some microarray platoforms, such as \texttt{HuEx10stv2}, the probe sequence mappings are available from the \href{http://www.affymetrix.com/}{Affymetrix} website (\href{http://www.affymetrix.com/Auth/analysis/downloads/na25/wtexon/HuEx-1_0-st-v2.probe.tab.zip}{HuEx-1\_0-st-v2 Probe Sequences, tabular format}). However, they are mapped to an old version of genome assembly (hg16), so we do not recommend using them.
+
+In our data package \prebsdata{}, we provide probe sequence mapping files for three microarray platforms: \texttt{HGU133Plus2}, \texttt{HGU133A2} and \texttt{HGFocus}. We have created these files by mapping probe sequences to human genome using Bowtie software~\cite{langmead2009}. If you want to use another microarray platform, you will have to map probe sequences yourself. A detailed procedure of creating probe sequence mapping files using Bowtie is outlined below.
+
+For most of the microarray platforms, the probe sequences can be retrieved from the platform's probe package. The probe package name is the same as CDF package name, except that it ends with "probe" instead of "cdf". For example, to install probe package for "hgu133plus2" platform, type:
+<< eval=FALSE >>==
+source("http://www.bioconductor.org/biocLite.R")
+biocLite("hgu133plus2probe")
+@
+Once you load the \Rpackage{hgu133plus2probe} package, you can find the information about the probe sequences stored in hgu133plus2probe object which can be converted to a data frame.
+<<>>==
+library("hgu133plus2probe")
+probes <- as.data.frame(hgu133plus2probe)
+head(probes)
+@
+
+Next, we should remove rows that have probe set identifiers that start if "AFFX", because these do not target genes and are not relevant to us. Also, we use \Rfunction{xy2indices} function from affy package to convert probe X and Y coordinates to probe IDs and add a new column to the data frame. We will save the resulting data frame to a file "\verb+probes.txt+".
+
+<<eval=FALSE>>==
+library("affy")
+probes <- probes[substr(probes$Probe.Set.Name,1,4) != "AFFX",]
+probes$Probe.ID <- xy2indices(probes$x, probes$y, cdf="hgu133plus2cdf")
+write.table(probes, file="probes.txt", quote=FALSE, row.names=FALSE, col.names=TRUE)
+@
+ 
+The first column in a file "\verb+probes.txt+" contains probe sequence and the seventh column contains probe ID. To format an input for Bowtie, we need to extract these two columns and format a fasta file:
+\begin{verbatim}
+tail -n +2 "probes.txt" | awk '{print ">" $7 "\n" $1 }' > probe_sequences.fa
+\end{verbatim}
+
+Now we are ready to map the probe sequences to the genome. We suggest using Bowtie options \texttt{-a -v 0} to report all perfect match hits. A sample Bowtie run could look like this:
+
+\begin{verbatim}
+bowtie -a -v 0 hg19 -f probe_sequences.fa output_probe_mappings.map
+\end{verbatim}
+
+After we map probe sequences to the genome, we must convert Bowtie output to the format identical to Custom CDF probe sequence mapping files. The default format of Bowtie output is documented in \href{http://bowtie-bio.sourceforge.net/manual.shtml#default-bowtie-output}{Bowtie homepage}. The first column contains "Read ID" which in our case is "Probe.ID". We have to read Bowtie output file "\verb+output_probe_mappings.map+", and probe sequence information file "\verb+probes.txt+" and merge the two data frames based on "Probe.ID" column. Then, we have to extract the necessary information from the resulting merged table and save it into "\verb+_mapping.txt+" file. Note that we also have to shift Bowtie mapping positions by 1, because it uses a different offset than "\verb+_mapping.txt+" files.
+
+Briefly, here are the commands we have to run:
+
+<<eval=FALSE>>==
+probe_mappings <- read.table("output_probe_mappings.map")
+
+colnames(probe_mappings) <- c("Probe.ID", "strand", 
+                              "chr", "start", "seq", "match", "multiple")
+
+# bowtie reports 0-offset, but _mapping.txt files are 1-offset
+probe_mappings$start <- probe_mappings$start + 1 
+
+probes <- read.table("probes.txt", head=TRUE)
+
+probes <- merge(probes, probe_mappings)
+
+output_table <- data.frame(Probe.Set.Name=probes$Probe.Set.Name, 
+    Chr=probes$chr, Chr.Strand=probes$strand, Chr.From=probes$start, 
+    Probe.X=probes$x, Probe.Y=probes$y, Affy.Probe.Set.Name=probes$Probe.Set.Name)
+
+write.table(output_table, file="HGU133Plus2_mapping.txt", 
+            quote=FALSE, sep="\t", row.names=FALSE)
+@
+
+The resulting "\verb+_mapping.txt+" file can be used as an input for \calcprebs{}. If some of the probe sequences were mapped to multiple locations, \calcprebs{} function will handle them by summing up the read overlaps from all of these locations. If some probe sequences could not be mapped, \calcprebs{} will assign minimal expression values to these probes. If you are using a manually created "\verb+_mapping.txt+" file, \calcprebs{} will show notifications about the missing probe sequences (that were not mapped) and probe sequences that have duplicates (that were mapped to multiple locations).
+
+\subsection{Cluster object for parallel computation}
+
+If you have many input BAM files, processing them can be a computationally expensive task. Therefore, \prebs{} provides a possibility to parallelize BAM file processing using \Rpackage{parallel} package. In order to parallelize the work, you must use \Rfunction{makeCluster} function to create a cluster object and pass it to \calcprebs{} function. The function \Rfunction{makeCluster} has several parameters that support different types of clusters. For a detailed explanation of \Rfunction{makeCluster}, please, refer to \Rpackage{parallel} package manual. One simple example of using \Rfunction{makeCluster} was already covered in Section \ref{section:Examples}.
+
+\section{Session Info}
+
+<<sessionInfo>>=
+sessionInfo()
+@ 
+
+\bibliographystyle{plainnat}
+\bibliography{my_references}
+
+\end{document}
