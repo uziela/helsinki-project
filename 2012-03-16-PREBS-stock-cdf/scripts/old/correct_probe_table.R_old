@@ -1,0 +1,45 @@
+#! /usr/bin/Rscript 
+
+cargs <- commandArgs(trailingOnly = TRUE)
+
+input_file <- cargs[1]
+output_file <- cargs[2]
+
+library(plyr)
+
+load(input_file)
+
+probe_table <- as.data.frame(probe_table)
+
+probe_table$id <- rownames(probe_table)
+
+#probe_table <- tail(probe_table, 100)
+
+correct <- ddply(probe_table, "id", function(df)c(sum(df$kidney),sum(df$liver)))
+
+colnames(correct) <- c("id", "kidney", "liver")
+
+library(affy)
+Data <- ReadAffy(celfile.path="../datasets/Marioni-stock/all-cel")
+allg <- geneNames(Data)
+subset <- allg[substr(allg,1,4) != "AFFX"]
+pm_probes <- pm(Data, subset)
+
+
+nrow(correct)
+
+pm_names <- rownames(pm_probes)
+missing_names <- pm_names[!is.element(pm_names, correct$id)]
+add_table <- data.frame(id=missing_names, kidney=0, liver=0)
+
+correct <- rbind(correct, add_table)
+
+nrow(correct)
+nrow(pm_probes)
+
+probe_table_mat <- matrix(c(correct$kidney, correct$liver),ncol=2)
+colnames(probe_table_mat) <- c("kidney","liver")
+rownames(probe_table_mat) <- correct$id
+probe_table <- probe_table_mat
+
+save(probe_table, file=output_file)

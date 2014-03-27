@@ -1,0 +1,47 @@
+#! /usr/bin/Rscript 
+
+cargs <- commandArgs(trailingOnly = TRUE)
+
+cel_dir <- cargs[1] 
+cdf_name <- cargs[2]
+probe_table <- cargs[3]
+out_file <- cargs[4]
+
+library(affy)
+
+Data <- ReadAffy(celfile.path=cel_dir, cdfname=cdf_name)
+
+load(probe_table)
+Data <- Data[,1:ncol(probe_table)]
+
+probe_table <- probe_table + 1
+#probe_table <- probe_table + runif(length(probe_table)) * 1
+
+#head(probe_table)
+#probe_table[,1] <- probe_table[,1] * 10
+#head(probe_table)
+
+#head(exprs(Data))
+exprs(Data)[,1:ncol(probe_table)] = 0
+#head(exprs(Data))
+
+exprs(Data)[rownames(probe_table),] <- probe_table
+
+verbose = TRUE; normalize = TRUE; background = FALSE; bgversion = 2; subset = NULL
+
+ngenes <- length(geneNames(Data))
+pNList <- probeNames(Data, subset)
+pNList <- split(0:(length(pNList) - 1), pNList)
+
+pm_probes <- pm(Data, subset)
+
+prebs_rma <- .Call("rma_c_complete_copy", pm_probes, pNList, ngenes, normalize, background, bgversion, verbose, PACKAGE = "affy")
+
+prebs_rma <- as.data.frame(prebs_rma)
+colnames(prebs_rma) <- colnames(probe_table)
+prebs_rma$Gene_ID <- substr(rownames(prebs_rma), 1, nchar(rownames(prebs_rma))-3)
+rownames(prebs_rma) <- 1:nrow(prebs_rma)
+
+save(prebs_rma, file=out_file)
+
+

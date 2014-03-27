@@ -1,0 +1,38 @@
+#! /usr/bin/Rscript --default-packages=methods
+cargs <- commandArgs(trailingOnly = TRUE)
+array_expr_file <- cargs[1] # array_expr.RData
+dict_file <- cargs[2]  # ./array-dict/dict_array_short.txt
+output_file <- cargs[3] # array_expr_means.RData
+
+
+load(array_expr_file)
+
+dict <- read.table(dict_file, sep=":")
+colnames(dict) <- c("GM","cel_indexes")
+
+array_expr_means <- numeric(0)
+
+
+for (i in 1:nrow(dict)) {
+	#gm <- as.character(dict[i,]$GM)
+	cel_indexes <- as.character(dict[i,]$cel_indexes)
+	#print(gm)
+	#print(cel_indexes)
+	cel_indexes <- as.numeric(unlist(strsplit(cel_indexes,",")))
+	array_expr_subset <- array_expr[,cel_indexes]
+	
+	if (length(cel_indexes) == 1) {
+		means <- array_expr_subset
+	} else {
+		means <- rowMeans(array_expr_subset, na.rm=TRUE)
+	}
+	
+	array_expr_means <- cbind(array_expr_means, means)
+}
+
+colnames(array_expr_means) <- dict$GM
+rownames(array_expr_means) <- substr(rownames(array_expr), 1, nchar(rownames(array_expr))-3)
+
+
+save(array_expr_means, file=output_file)
+

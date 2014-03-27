@@ -1,0 +1,17 @@
+#! /usr/bin/Rscript --default-packages=methods
+cargs <- commandArgs(trailingOnly = TRUE)
+
+cel_dir <- cargs[1] # B-cells/all-cel 
+cdf_name <- cargs[2] # HGFocus_Hs_ENSG
+output_file <- cargs[3] # "B-cells/array_expr.RData"
+
+library(affy)
+
+Data <- ReadAffy(cdfname = cdf_name, celfile.path = cel_dir)
+eset <- rma(Data)
+array_expr <- exprs(eset)
+probe_expr <- exprs(Data)
+
+save(array_expr, probe_expr, file=output_file)
+
+

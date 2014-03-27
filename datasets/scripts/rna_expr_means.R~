@@ -1,0 +1,28 @@
+#! /usr/bin/Rscript 
+cargs <- commandArgs(trailingOnly = TRUE)
+
+output_file <- cargs[1]
+mmseq_files <- cargs # mmseq gene expression files
+
+rna_expr_means <- numeric(0)
+
+file_names <- character(0)
+
+
+for (i in 2:length(mmseq_files)) {
+	mmseqFile <- mmseq_files[i]
+	
+	mmseq <- read.csv(mmseqFile, sep = "\t", comment.char = "#")
+	
+	rna_expr_means <- cbind(rna_expr_means, mmseq$log_mu_gibbs / log(2))
+
+	rownames(rna_expr_means) <- mmseq$gene_id
+	
+	file_name <- strsplit(mmseq_files[i], "/")
+	file_name <- file_name[[1]][2]
+	file_names <- c(file_names, file_name)
+}
+
+colnames(rna_expr_means) <- file_names
+
+save(rna_expr_means, file=output_file)

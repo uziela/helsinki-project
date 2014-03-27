@@ -1,0 +1,10 @@
+#! /bin/sh
+#SBATCH --time=0-04:00:00 --mem-per-cpu=2500
+#SBATCH -p short
+
+sra_file=$1
+sra_dir=`dirname $sra_file`
+sra_base=`basename $sra_file`
+
+cd $sra_dir
+srun fastq-dump $sra_file
