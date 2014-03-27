@@ -1,0 +1,4 @@
+kidney,SRR002320
+kidney,SRR002325
+liver,SRR002321
+liver,SRR002323

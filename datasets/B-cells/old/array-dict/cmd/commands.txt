@@ -1,0 +1,6 @@
+cat aa.soft | grep "!Sample_title" > titles.soft
+cat aa.soft | grep "\!Sample_geo_accession" > access.soft
+cat titles.soft | cut -d _ -f 4 > titles.txt
+cat access.soft | cut -d " " -f 3 > access.txt
+
+cat array.txt | cut -d " " -f 8 | cut -d _ -f 1 > array_GM.txt

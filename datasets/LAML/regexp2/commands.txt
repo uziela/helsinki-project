@@ -1,0 +1,14 @@
+cat laml3 | grep SRR0 > laml4
+cat laml4 | ./reformat.pl > laml5
+cp laml5 ../rna_dict_paired.txt
+
+
+sra_ids=`cat rna_dict_22-80.txt | cut -f 2 -d ":" | tr "," " " | tr "\n" " "`
+
+cat laml3 | grep SRR1 | cut -f 1 -d " " | sort | uniq >missed-SRR1.txt
+
+for i in `ls /cs/hiit/wfa/tcga_data/LAML/23959/reads/sra/LAML/` ; do mygrep=`cat ../rna_dict_paired.txt | grep $i` ; if [ "" == "$mygrep" ] ; then echo $i ; fi ; done > unpaired_rnaseq.txt
+
+cat laml3 | grep "SRR1" > missed1
+cat missed1 | ./reformat.pl > missed2
+cp missed2 ../rna_dict_missed.txt
