@@ -7,7 +7,7 @@
 
 echo "runall.sh started with parameters: $*"
 
-if [ $# != 7 ] ; then
+if [ $# != 8 ] ; then
 	echo "
 Usage: 
 
@@ -21,6 +21,7 @@ Parameters:
 <mode> - BASIC, REPLACE or CROSS_DIFF
 <percentage_upper> - upper percentage threshold*
 <percentage_lower> - lower percentage threshold*
+<PREBS_precalc_file>
 
 * - for example upper=0, lower=25 thresholds will yield the top 25% genes to be displayed. upper=25, lower=50 will yield genes which are between 25% and 50% quantile to be displayed.
 
@@ -45,6 +46,7 @@ my_cdf=$4
 mode=$5
 percentage_upper=$6
 percentage_lower=$7
+prebs_precalc=$8
 
 #collapse="0.3"
 
@@ -55,18 +57,15 @@ if [ ! -d $output_dir ] ; then
 	mkdir $output_dir
 fi
 
-if [ ! -f $output_dir/PREBS_probe_table.RData ] ; then
-  echo_both "------------------- stage 1 -------------------"
-	./scripts/PREBS_probe_table.R $output_dir/PREBS_probe_table.RData $cdf_package $input_dir/*/probe_counts.RData
-fi
-
-if [ ! -f $output_dir/PREBS_RMA.RData ] ; then
-  echo_both "------------------- stage 2 -------------------"
-	./scripts/PREBS_RMA_exprs.R $dataset_dir/all-cel $my_cdf $output_dir/PREBS_probe_table.RData $output_dir/PREBS_RMA.RData
-fi
+#if [ ! -f $output_dir/PREBS_probe_table.RData ] ; then
+#	./scripts/PREBS_probe_table.R $output_dir/PREBS_probe_table.RData $cdf_package $input_dir/*/probe_counts.RData
+#fi
+#
+#if [ ! -f $output_dir/PREBS_RMA.RData ] ; then
+#	./scripts/PREBS_RMA_exprs.R $dataset_dir/all-cel $my_cdf $output_dir/PREBS_probe_table.RData $output_dir/PREBS_RMA.RData
+#fi
 
 if [ ! -d $output_dir/plots ] ; then
-  echo_both "------------------- stage 3 -------------------"
 	mkdir $output_dir/plots
 	mkdir $output_dir/tables
 	mkdir $output_dir/plots-diff
@@ -74,7 +73,7 @@ if [ ! -d $output_dir/plots ] ; then
 	#abs_path=`readlink -f $input_dir`
 	#ln -s $abs_path/*/plots/* $output_dir/plots
 	#cp $input_dir/*/plots/* $output_dir/plots
-	./scripts/PREBS_RMA_save.R $output_dir $input_dir/*
+	./scripts/PREBS_RMA_save_precalc.R $output_dir $prebs_precalc $input_dir/*
 	
 	./scripts/PREBS_stats.R $output_dir $mode $percentage_upper $percentage_lower $output_dir/*_merged.RData
 	./scripts/csv_to_html.py $output_dir/tables/prebs_stats.csv $output_dir/tables/prebs_stats.html "," "Absolute expression correlations"

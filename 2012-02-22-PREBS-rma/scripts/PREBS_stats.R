@@ -240,10 +240,15 @@ for (i in 1:(N_SAMPLES-1)) {
 		#print(j)
 		load(merged_files[i])
 		merged1 <- merged_with_rma
-		colnames(merged1) <- c("Gene_ID", "PREBS_mean1", "PREBS_median1", "array_expr1", "mmseq_expr1", "RPKM1", "PREBS_RMA1")
 		load(merged_files[j])
 		merged2 <- merged_with_rma
-		colnames(merged2) <- c("Gene_ID", "PREBS_mean2", "PREBS_median2", "array_expr2", "mmseq_expr2", "RPKM2", "PREBS_RMA2")
+    if (ncol(merged1) == 7) {
+		  colnames(merged1) <- c("Gene_ID", "PREBS_mean1", "PREBS_median1", "array_expr1", "mmseq_expr1", "RPKM1", "PREBS_RMA1")
+		  colnames(merged2) <- c("Gene_ID", "PREBS_mean2", "PREBS_median2", "array_expr2", "mmseq_expr2", "RPKM2", "PREBS_RMA2")
+    } else if (ncol(merged1) == 5) {
+		  colnames(merged1) <- c("Gene_ID", "array_expr1", "mmseq_expr1", "RPKM1", "PREBS_RMA1")
+		  colnames(merged2) <- c("Gene_ID", "array_expr2", "mmseq_expr2", "RPKM2", "PREBS_RMA2")
+    }
 		merged <- merge(merged1, merged2)
 
 		merged$array_log2fc <- merged$array_expr2 - merged$array_expr1

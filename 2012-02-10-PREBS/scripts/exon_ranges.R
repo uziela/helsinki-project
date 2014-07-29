@@ -1,3 +1,4 @@
+#! /cs/fs2/home/uziela/software/R-3.1.0/bin/Rscript
 # Reads exon ranges from UCSC server and stores them in RData file
 
 library(GenomicFeatures)
