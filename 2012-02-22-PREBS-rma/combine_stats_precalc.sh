@@ -1,7 +1,7 @@
 #!/bin/sh
 
-output_dir="output_LAML_all_precalc"
-output_dir2="output_Marioni_precalc"
+output_dir="output_LAML_all_precalc_count_multiple"
+output_dir2="output_Marioni_precalc_count_multiple"
 Marioni_dir="plot-data-precalc/output_Marioni-basic-0-60-paper-precalc"
 LAML_dir="plot-data-precalc/output_LAML_all-basic-0-60-paper-precalc"
 

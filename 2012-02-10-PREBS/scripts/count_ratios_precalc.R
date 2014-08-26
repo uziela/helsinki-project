@@ -7,7 +7,7 @@ library(Rsamtools);
 cargs <- commandArgs(trailingOnly = TRUE)
 input_file <- cargs[1]
 probe_mapping_file <- cargs[2]
-output_file <- cargs[3]
+#output_file <- cargs[3]
 
 load(input_file)
 load("exons.RData")

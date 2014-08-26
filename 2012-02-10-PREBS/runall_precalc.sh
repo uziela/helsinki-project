@@ -115,7 +115,8 @@ if [ $mode == "RANGES" ] ; then
 	if [ ! -f $input_dir/accepted_hits_precalc_counts.RData ] ; then
 		echo "------------------- stage 5 -------------------"
 		echo "------------------- stage 5 -------------------" 1>&2
-    ./scripts/getCounts_precalc.R $input_dir/accepted_hits_precalc.RData $input_dir/accepted_hits_precalc_counts.RData
+    #./scripts/getCounts_precalc.R $input_dir/accepted_hits_precalc.RData $input_dir/accepted_hits_precalc_counts.RData
+    /cs/fs2/home/uziela/software/R-3.1.0/bin/Rscript scripts/getCounts.R $input_dir/accepted_hits_precalc
 	fi
 fi
 

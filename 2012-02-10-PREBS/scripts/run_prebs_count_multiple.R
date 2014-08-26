@@ -30,6 +30,7 @@ Sys.time()
 #prebs_values <- calc_prebs(input_bam_files, probe_mapping_file, output_eset=FALSE, cluster=CLUSTER, paired_ended_reads = TRUE, ignore_strand = TRUE)
 #prebs_values <- calc_prebs(input_bam_files, probe_mapping_file, output_eset=FALSE, paired_ended_reads = TRUE, ignore_strand = TRUE)
 prebs_values <- calc_prebs(input_bam_files, probe_mapping_file, output_eset=FALSE, paired_ended_reads = FALSE, ignore_strand = TRUE, count_multiple = TRUE)
+#prebs_values <- calc_prebs(input_bam_files, probe_mapping_file, output_eset=FALSE, paired_ended_reads = TRUE, ignore_strand = TRUE, count_multiple = TRUE)
 
 Sys.time()
 
