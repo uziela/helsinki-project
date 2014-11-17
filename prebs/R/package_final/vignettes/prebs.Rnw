@@ -1,11 +1,12 @@
 %\VignetteIndexEntry{prebs User Guide}
 %\VignetteKeywords{RNA-sequencing, gene expression microarrays, comparability}
-%\VignetteDepends{Rsamtools, GenomicRanges, affy, methods, stats, IRanges, hgu133plus2cdf}
+%\VignetteDepends{GenomicRanges, affy, methods, stats, IRanges, hgu133plus2cdf}
 %\VignettePackage{prebs}
 \documentclass[a4paper]{article}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage[authoryear,round]{natbib}
+\usepackage{longtable}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{5pt}
@@ -183,13 +184,16 @@ Now we have presented pretty much all important ways of running \calcprebs{} fun
 
 The main function of the package \calcprebs{} has the following input arguments:
 
-\begin{enumerate}
-  \item Mapped reads in BAM format.
-  \item Probe sequence mappings in a genome ("\texttt{*cdfname*\_mapping.txt}" file) and the name of CDF package (optional). If the name of CDF package is not given, it is inferred from the filename containing probe sequence mappings.
-  \item Cluster object for parallelization (optional)
-\end{enumerate}
+\noindent
+\begin{longtable}{@{}p{0.35\textwidth}p{0.6\textwidth}@{}}
+\textbf{bam\_files} & Mapped reads in BAM format \\
+\textbf{probe\_mapping\_file}, \textbf{cdf\_name} & Probe sequence mappings in a genome ("\texttt{*cdfname*\_mapping.txt}" file) and the name of CDF package  \\
+\textbf{cluster} & Cluster object for parallelization \\
+\textbf{output\_eset} & Option that controls output format (ExpressionSet vs data frame) \\
+\textbf{paired\_ended\_reads}, \textbf{ignore\_strand} & Options that control the process of counting reads
+\end{longtable}
 
-In this section we will discuss all the input requirements in more detail.
+In this section we will discuss all the input requirements in more detail. Note that only two input arguments are mandatory: \texttt{bam\_files} and \texttt{probe\_mapping\_file}. The rest of the arguments are optional and have their default values.
 
 \subsection{BAM files}
 
@@ -290,6 +294,14 @@ The resulting "\verb+_mapping.txt+" file can be used as an input for \calcprebs{
 \subsection{Cluster object for parallel computation}
 
 If you have many input BAM files, processing them can be a computationally expensive task. Therefore, \prebs{} provides a possibility to parallelize BAM file processing using \Rpackage{parallel} package. In order to parallelize the work, you must use \Rfunction{makeCluster} function to create a cluster object and pass it to \calcprebs{} function. The function \Rfunction{makeCluster} has several parameters that support different types of clusters. For a detailed explanation of \Rfunction{makeCluster}, please, refer to \Rpackage{parallel} package manual. One simple example of using \Rfunction{makeCluster} was already covered in Section \ref{section:Examples}.
+
+\subsection{Output format}
+
+\calcprebs{} provides two arguments for output format: ExpressionSet or data.frame. ExpressionSet is a container for high-throughput assays and experimental meta-data from Biobase package, whereas data frame is just a standard R data structure.
+
+\subsection{Read counting options}
+
+\calcprebs{} has a couple of arguments that control the process of the read counting. \texttt{paired\_ended\_reads} argument ensures the correct treatment of paired-ended reads. If your data contains paired-ended reads, you should set this option to \texttt{TRUE}, otherwise the two mate reads will be treated as independent units. Another argument, \texttt{ignore\_strand} controls whether the strand from which the reads comes should be considered during read-counting. If your data comes from strand-specific RNA-seq protocol, set this option to FALSE, otherwise, leave it at its default value (TRUE).
 
 \section{Session Info}
 

@@ -38,7 +38,11 @@ array_dict=$5
 
 #./scripts/rna_expr_means.R $input_dir/rna_expr_means.RData $mmseq_dir/*/*.gene.mmseq
 #./scripts/array_expr.R $input_dir/all-cel $cdf_name $input_dir/array_expr.RData $mode
-./scripts/array_expr_means.R $input_dir/array_expr.RData $array_dict $input_dir/array_expr_means.RData
+#./scripts/array_expr_means.R $input_dir/array_expr.RData $array_dict $input_dir/array_expr_means.RData
+
+
+./scripts/array_expr_rpa.R $input_dir/all-cel $cdf_name $input_dir/array_expr_rpa.RData
+./scripts/array_expr_means.R $input_dir/array_expr_rpa.RData $array_dict $input_dir/array_expr_means_rpa.RData
 
 
 echo "runall.sh done."

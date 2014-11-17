@@ -10,7 +10,7 @@ my_cor <- function(var1, var2, my_method) {
 
 my_plot <- function(var1, var2, my_xlab, my_ylab, my_title) {
 	
-  smoothScatter(var1, var2, xlab=my_xlab, ylab=my_ylab, sub=my_title, font.sub=2, colramp = colorRampPalette(c("white", "black")))
+  smoothScatter(var1, var2, xlab=my_xlab, ylab=my_ylab, sub=my_title, font.sub=2)
   
   r <- my_cor(var1, var2, "pearson")
   n <- length(var1)
@@ -122,7 +122,7 @@ pushViewport(viewport(layout = grid.layout(1, 2)))
 
 pushViewport(viewport(layout.pos.col = 1, layout.pos.row = 1))
 load(paste(Marioni_dir, "/venn.RData", sep=""))
-venn.plot1 <- draw.triple.venn(area1, area2, area3, n12, n23, n13, n123, category = c("MMSEQ", "Microarray", "PREBS"), cex = 0.6, cat.cex = 0.6, euler.d=TRUE, scaled=TRUE, margin=0.05);
+venn.plot1 <- draw.triple.venn(area1, area2, area3, n12, n23, n13, n123, category = c("MMSEQ", "Microarray", "PREBS"), cex = 0.6, cat.cex = 0.6, euler.d=TRUE, scaled=TRUE, margin=0.05)
 grid.draw(venn.plot1)
 grid.text("(a) Marioni data set", y=0.02, just=c("centre", "bottom"),
           gp=gpar(fontsize=8, fontface='bold'))
@@ -130,7 +130,7 @@ popViewport()
 
 pushViewport(viewport(layout.pos.col = 2, layout.pos.row = 1))
 load(paste(LAML_dir, "/venn.RData", sep=""))
-venn.plot2 <- draw.triple.venn(area1, area2, area3, n12, n23, n13, n123, category = c("MMSEQ", "Microarray", "PREBS"),  cex = 0.6, cat.cex = 0.6, euler.d=TRUE, scaled=TRUE, margin=0.05, title="LAML data" );
+venn.plot2 <- draw.triple.venn(area1, area2, area3, n12, n23, n13, n123, category = c("MMSEQ", "Microarray", "PREBS"),  cex = 0.6, cat.cex = 0.6, euler.d=TRUE, scaled=TRUE, margin=0.05, title="LAML data" )
 grid.draw(venn.plot2)
 grid.text("(b) LAML data set", y=0.02, just=c("centre", "bottom"),
           gp=gpar(fontsize=8, fontface='bold'))

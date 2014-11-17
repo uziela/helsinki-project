@@ -1,11 +1,17 @@
 K 25
 svn:wc:ra_dav:version-url
 V 53
-/svn/biofocus/!svn/ver/120/prebs/R/package_final/inst
+/svn/biofocus/!svn/ver/525/prebs/R/package_final/inst
 END
 CITATION
 K 25
 svn:wc:ra_dav:version-url
 V 62
 /svn/biofocus/!svn/ver/120/prebs/R/package_final/inst/CITATION
+END
+NEWS
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/biofocus/!svn/ver/525/prebs/R/package_final/inst/NEWS
 END

@@ -1,31 +1,20 @@
 Package: prebs
 Title: Probe region expression estimation for RNA-seq data for improved
-    microarray comparability
+        microarray comparability
 Description: The prebs package aims at making RNA-sequencing (RNA-seq)
-    data more comparable to microarray data. The comparability is achieved
-    by summarizing sequencing-based expressions of probe regions using
-    a modified version of RMA algorithm. The pipeline takes mapped reads
-    in BAM format as an input and produces either gene expressions or
-    original microarray probe set expressions as an output.
-Version: 0.99.4
+        data more comparable to microarray data. The comparability is
+        achieved by summarizing sequencing-based expressions of probe
+        regions using a modified version of RMA algorithm. The pipeline
+        takes mapped reads in BAM format as an input and produces
+        either gene expressions or original microarray probe set
+        expressions as an output.
+Version: 1.6.0
 Author: Karolis Uziela and Antti Honkela
 Maintainer: Karolis Uziela <karolis.uziela@scilifelab.se>
-Depends:
-    R (>= 2.14.0),
-    Rsamtools,
-    affy
-Imports:
-    parallel,
-    methods,
-    stats,
-    GenomicRanges,
-    IRanges
-Suggests:
-    prebsdata,
-    hgu133plus2cdf,
-    hgu133plus2probe
+Depends: R (>= 2.14.0), GenomicAlignments, affy, RPA
+Imports: parallel, methods, stats, GenomicRanges (>= 1.13.3), IRanges
+Suggests: prebsdata, hgu133plus2cdf, hgu133plus2probe
 License: Artistic-2.0
-biocViews: Microarray, RNAseq, Sequencing, Bioinformatics, GeneExpression,
-    Preprocessing
-Collate:
-    'PREBS.R'
+Collate: 'PREBS.R'
+biocViews: Microarray, RNASeq, Sequencing, GeneExpression,
+        Preprocessing

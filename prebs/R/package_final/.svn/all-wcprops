@@ -1,17 +1,17 @@
 K 25
 svn:wc:ra_dav:version-url
 V 48
-/svn/biofocus/!svn/ver/140/prebs/R/package_final
+/svn/biofocus/!svn/ver/529/prebs/R/package_final
+END
+NAMESPACE
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/biofocus/!svn/ver/526/prebs/R/package_final/NAMESPACE
 END
 DESCRIPTION
 K 25
 svn:wc:ra_dav:version-url
 V 60
-/svn/biofocus/!svn/ver/129/prebs/R/package_final/DESCRIPTION
-END
-NAMESPACE
-K 25
-svn:wc:ra_dav:version-url
-V 57
-/svn/biofocus/!svn/ver/86/prebs/R/package_final/NAMESPACE
+/svn/biofocus/!svn/ver/526/prebs/R/package_final/DESCRIPTION
 END

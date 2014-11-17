@@ -2,7 +2,7 @@
 
 ########################################### Libraries #################################################
 
-#library(Rsamtools)
+#library(GenomicAlignments)
 #library(GenomicRanges)
 #library(affy)
 #library(parallel)
@@ -20,7 +20,7 @@
 #'
 #' The package has only one public function: \code{calc_prebs}. 
 #' Type help(calc_prebs) for more information on the usage.
-#' @importFrom Rsamtools readBamGappedAlignments
+#' @importFrom GenomicAlignments readGAlignmentsFromBam readGAlignmentPairs
 #' @importFrom stats optim
 #' @importFrom parallel parLapply
 #' @importFrom methods setClass setMethod
@@ -87,24 +87,36 @@ granges_from_cdf <- function(probe_mapping_file, CDF_NAME) {
 }
 
 ## Read a single BAM file and count overlaps with probe regions
-read_bam_and_count_overlaps <- function(bam_file, probe_ranges) {
-  #library(Rsamtools)
-  bam_aligns <- readBamGappedAlignments(bam_file)
-  counts <- countOverlaps(probe_ranges, bam_aligns)
+read_bam_and_count_overlaps <- function(bam_file, probe_ranges, paired_ended_reads, ignore_strand) {
+  #library(GenomicAlignments)
+  #library(GenomicRanges)
+  if (paired_ended_reads) {
+    bam_aligns <- readGAlignmentPairs(bam_file)
+  } else {
+    bam_aligns <- readGAlignmentsFromBam(bam_file)
+  }
+
+  if (! ("X" %in% names(seqlengths(bam_aligns)))) {
+    stop("Unrecognized chromosome names. You are probably using a bam file whose reads were mapped to UCSC genome. Currently only bam files with reads mapped to ENSEMBL genome are supported. ENSEMBL reference genomes can be downloaded from ENSEMBL FTP server.")
+  }  
+
+  counts <- countOverlaps(probe_ranges, bam_aligns, ignore.strand=ignore_strand) 
+
   rm(bam_aligns)
   gc()
+  print(paste("Finished:",bam_file))
   return(counts)
 }
 
 ## Read all BAM files and calculate read overlaps with probe regions
-count_overlaps_from_bam <- function(bam_files, probe_mapping_file, CDF_NAME, CLUSTER) {
+count_overlaps_from_bam <- function(bam_files, probe_mapping_file, CDF_NAME, CLUSTER, paired_ended_reads, ignore_strand) {
 
   my_ranges <- granges_from_cdf(probe_mapping_file, CDF_NAME)
   
   if (is.null(CLUSTER)) {
-    counts <- lapply(bam_files, read_bam_and_count_overlaps, probe_ranges=my_ranges)
+    counts <- lapply(bam_files, read_bam_and_count_overlaps, probe_ranges=my_ranges, paired_ended_reads=paired_ended_reads, ignore_strand = ignore_strand)
   } else {
-    counts <- parLapply(CLUSTER, bam_files, read_bam_and_count_overlaps, probe_ranges=my_ranges)
+    counts <- parLapply(CLUSTER, bam_files, read_bam_and_count_overlaps, probe_ranges=my_ranges, paired_ended_reads=paired_ended_reads, ignore_strand = ignore_strand)
   }
   probe_table <- do.call(cbind, counts)
   colnames(probe_table) <- basename(bam_files)
@@ -178,7 +190,7 @@ probe_table_expressions <- function(probe_table) {
 }
 
 # Check if all probe sequence ids are present in probe_table. 
-# When working with Custom CDF it should always be the case.
+# When working with Custom CDF it should always be the case, as long as you are using the latest version cdf package and _mapping.txt file
 # When working with Manufacturer's CDF, some probe IDs might be missing in _mapping.txt file
 # because the file is manually created and some probe sequences fail to be mapped to genome.
 check_probe_table <- function(probe_table, all_probes_vec) {
@@ -232,7 +244,7 @@ perform_rma <- function(probe_table, CDF_NAME, output_eset) {
   probe_table <- check_probe_table(probe_table, all_probes_vec)
 
   # Select pm probes in probe_table
-  probe_table_mapped <- probe_table[all_probes_vec,]
+  probe_table_mapped <- probe_table[all_probes_vec,,drop=FALSE]
   row.names(probe_table_mapped) <- row.names(all_probes_vec)
 
   # Create pNList and ngenes input variables
@@ -247,7 +259,9 @@ perform_rma <- function(probe_table, CDF_NAME, output_eset) {
   prebs_values <- .Call("rma_c_complete_copy", probe_table_mapped, pNList, ngenes, normalize, background, bgversion, verbose, PACKAGE = "affy")
 
   # Save the results
-  colnames(prebs_values) <- colnames(probe_table)
+  coln <- colnames(probe_table)
+  coln[duplicated(coln)] <- paste(coln[duplicated(coln)],1:length(coln[duplicated(coln)]), sep="") # rename duplicated columns
+  colnames(prebs_values) <- coln
 
   if (output_eset) {
     rownames(prebs_values) <- substr(rownames(prebs_values), 1, nchar(rownames(prebs_values))-3) # remove trailing _at from identifiers
@@ -261,6 +275,47 @@ perform_rma <- function(probe_table, CDF_NAME, output_eset) {
   return(prebs_values)
 }
 
+perform_rpa <- function(probe_table, CDF_NAME, output_eset) {
+  # Get CDF env to find out what is the maximum probe index
+  cdn <- new("CDFName", CDF_NAME)
+  cdf_env <- getCdfInfo(cdn)  
+  max_ind <- max(sapply(mget(ls(cdf_env), cdf_env), max))
+
+  # Create a full matrix of probe expressions instead of sparse matrix
+  min_value <- min(probe_table)
+  sample_n <- ncol(probe_table)
+  probe_table_full <- matrix(data=min_value,nrow=max_ind, ncol=sample_n)
+  rownames(probe_table_full) <- 1:max_ind
+  colnames(probe_table_full) <- paste("sample", 1:ncol(probe_table_full), sep="") # Avoid duplicate column names in RPA input
+  probe_table_full[rownames(probe_table),] <- probe_table
+
+  # Convert the matrix of probe table expressions to AffyBatch object
+  eset <- ExpressionSet(assayData=probe_table_full, annotation = CDF_NAME)
+  ad <- assayData(eset)
+  abatch <- new("AffyBatch", cdfName = CDF_NAME, assayData=ad)
+  
+  # Apply RPA
+  prebs_values <- rpa(abatch, bg.method="none", cdf=CDF_NAME)
+  prebs_values <- exprs(prebs_values)
+  prebs_values <- prebs_values[substr(rownames(prebs_values),1,4) != "AFFX",] # Remove AFFX probes
+
+  # Save the results
+  coln <- colnames(probe_table)
+  coln[duplicated(coln)] <- paste(coln[duplicated(coln)],1:length(coln[duplicated(coln)]), sep="") # rename duplicated columns
+  colnames(prebs_values) <- coln
+  
+  if (output_eset) {
+    rownames(prebs_values) <- substr(rownames(prebs_values), 1, nchar(rownames(prebs_values))-3) # remove trailing _at from identifiers
+    prebs_values <- new("ExpressionSet", annotation = CDF_NAME, exprs = prebs_values)
+  } else {
+    prebs_values <- as.data.frame(prebs_values)
+    prebs_values$ID <- substr(rownames(prebs_values), 1, nchar(rownames(prebs_values))-3)
+    rownames(prebs_values) <- 1:nrow(prebs_values)
+  }
+
+  return(prebs_values)
+}
+    
 #' @title Calculate PREBS values
 #'
 #' @description
@@ -289,6 +344,8 @@ perform_rma <- function(probe_table, CDF_NAME, output_eset) {
 #' @param cdf_name A name of CDF package to use in RMA algorithm. If cdf_name=NULL, the package name is inferred from the name of probe_mapping_file ("HGU133Plus2_Hs_ENSG_mapping.txt" -> "hgu133plus2hsensgcdf")
 #' @param cluster A cluster object created using "makeCluster" function from "parellel" package. If cluster=NULL, no parallelization is used.
 #' @param output_eset If set to TRUE, the output of \code{calc_prebs} will be ExpressionSet object. Otherwise, the output will be a data frame.
+#' @param paired_ended_reads Set it to TRUE if your data contains paired-ended reads. Otherwise, the two read mates will be treated as independent units.
+#' @param ignore_strand If set to TRUE, then the strand is ignored while counting read overlaps with probe regions. If you use strand-specific RNA-seq protocol, set to FALSE, otherwise set it to TRUE.
 #' @return ExpressionSet object or a data frame containing PREBS values
 #' @export
 #' @examples 
@@ -331,20 +388,26 @@ perform_rma <- function(probe_table, CDF_NAME, output_eset) {
 #'   prebs_values <- calc_prebs(bam_files, manufacturer_cdf_mapping, cdf_name="hgu133plus2cdf")
 #' }
 
-calc_prebs <- function(bam_files, probe_mapping_file, cdf_name = NULL, cluster = NULL, output_eset=TRUE) {
+calc_prebs <- function(bam_files, probe_mapping_file, cdf_name = NULL, cluster = NULL, output_eset=TRUE, paired_ended_reads=FALSE, ignore_strand=TRUE, sum.method="rma") {
   if (is.null(cdf_name)) {
     cdf_name <- cdf_package_name(probe_mapping_file) # Get CDF package name from the filename of cdf mapping file
   }
   check_input(bam_files, probe_mapping_file, cdf_name)
 
-  probe_table <- count_overlaps_from_bam(bam_files, probe_mapping_file, cdf_name, cluster) # Read bam files and calculate read overlaps with probe regions
+  probe_table <- count_overlaps_from_bam(bam_files, probe_mapping_file, cdf_name, cluster, paired_ended_reads, ignore_strand) # Read bam files and calculate read overlaps with probe regions
   
   probe_table <- sum_duplicates(probe_table) # Sum duplicate row ids. Required only for manufacturer's CDF
 
   probe_table <- probe_table_expressions(probe_table) # Convert raw probe region counts to probe region expressions using statistical model
   
-  prebs_values <- perform_rma(probe_table, cdf_name, output_eset) # Perform RMA on probe region expressions
-  
+  if (sum.method == "rma") {
+    prebs_values <- perform_rma(probe_table, cdf_name, output_eset) # Perform RMA on probe region expressions
+  } else if (sum.method == "rpa") {
+    prebs_values <- perform_rpa(probe_table, cdf_name, output_eset)
+  } else {
+    stop("Invalid sum.method parameter. Has to be either 'rma' or 'rpa'")
+  }
+
   return(prebs_values)
 }
 

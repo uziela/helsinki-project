@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 52
-/svn/biofocus/!svn/ver/140/prebs/R/package_final/man
+/svn/biofocus/!svn/ver/525/prebs/R/package_final/man
 END
 prebs.Rd
 K 25
@@ -13,5 +13,5 @@ calc_prebs.Rd
 K 25
 svn:wc:ra_dav:version-url
 V 66
-/svn/biofocus/!svn/ver/140/prebs/R/package_final/man/calc_prebs.Rd
+/svn/biofocus/!svn/ver/525/prebs/R/package_final/man/calc_prebs.Rd
 END

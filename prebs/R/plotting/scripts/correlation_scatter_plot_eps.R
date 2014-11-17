@@ -18,11 +18,11 @@ old.par <- par
 par(mfrow=c(1,2), mar=c(5, 4, 1, 1) + 0.1, cex=MY_CEX)
 
 cor_table <- read.table(input_file_10, header=TRUE, sep=",")
-smoothScatter(cor_table$MMSEQ, cor_table$PREBS, xlab="MMSEQ vs microarray correlation", ylab="PREBS vs microarray correlation", xlim=c(0,1), ylim=c(0,1), sub="10% top expressed genes", font.sub=2, colramp = colorRampPalette(c("white", "black")))
+smoothScatter(cor_table$MMSEQ, cor_table$PREBS, xlab="MMSEQ vs microarray correlation", ylab="PREBS vs microarray correlation", xlim=c(0,1), ylim=c(0,1), sub="10% top expressed genes", font.sub=2)
 abline(a=0,b=1)
 
 cor_table <- read.table(input_file_60, header=TRUE, sep=",")
-smoothScatter(cor_table$MMSEQ, cor_table$PREBS, xlab="MMSEQ vs microarray correlation", ylab="PREBS vs microarray correlation", xlim=c(0,1), ylim=c(0,1), sub="60% top expressed genes", font.sub=2, colramp = colorRampPalette(c("white", "black")))
+smoothScatter(cor_table$MMSEQ, cor_table$PREBS, xlab="MMSEQ vs microarray correlation", ylab="PREBS vs microarray correlation", xlim=c(0,1), ylim=c(0,1), sub="60% top expressed genes", font.sub=2)
 abline(a=0,b=1)
 
 #cor_table <- read.table(input_file_log2fc_10, header=TRUE, sep=",")

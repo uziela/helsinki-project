@@ -1,14 +1,14 @@
 10
 
 dir
-400
+529
 https://vcs.hiit.fi/svn/biofocus/prebs/R/package_final
 https://vcs.hiit.fi/svn/biofocus
 
 
 
-2013-05-23T21:03:28.435825Z
-140
+2014-11-05T12:59:45.986734Z
+529
 12uziela
 has-props
 
@@ -26,6 +26,9 @@ has-props
 
 40583e0c-f8b9-4ffc-b455-927f15f9410e
 
+vignettes
+dir
+
 man
 dir
 
@@ -35,10 +38,10 @@ file
 
 
 
-2013-03-12T15:29:42.000000Z
-eb677ddde575eb2ceea6184cf94812a5
-2013-03-11T21:02:36.116737Z
-86
+2014-11-05T10:18:53.000000Z
+4d318deb482e4b48174568729b181994
+2014-11-05T10:18:41.932562Z
+526
 12uziela
 
 
@@ -61,7 +64,7 @@ eb677ddde575eb2ceea6184cf94812a5
 
 
 
-352
+429
 
 inst
 dir
@@ -75,10 +78,10 @@ file
 
 
 
-2013-05-23T20:24:40.725258Z
-49f5cacc5ffb9d6fe0af724c891f542a
-2013-05-08T14:30:37.415517Z
-129
+2014-11-05T10:18:53.000000Z
+fcf1b4fbec3559f451997450ee8bea74
+2014-11-05T10:18:41.932562Z
+526
 12uziela
 
 
@@ -101,8 +104,5 @@ file
 
 
 
-985
-
-vignettes
-dir
+981
 

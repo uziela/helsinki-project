@@ -28,11 +28,12 @@ merged <- merged[merged$filter_n != 50,]
 
 setEPS()
 postscript(output_file, height=3, width=3)
+#png(paste(output_file, ".png", sep=""), pointsize = 18)
 par(mar=c(4, 4, 1, 1) + 0.1, cex=0.62)
-plot(1:N, merged$MMSEQ, type="b", ylim=c(0,100), xaxt='n', xlab="Number of genes in retrieval signature", ylab="Retrieval accuracy", lty=3, cex=0.7)
-lines(1:N, merged$RPKM, type="b", lty=2, cex=0.7)
-lines(1:N, merged$PREBS, type="b", lty=1, cex=0.7)
-legend("bottomright",c("PREBS","Read counting", "MMSEQ"), lty=c(1,2,3))
+plot(1:N, merged$MMSEQ, type="b", ylim=c(0,100), xaxt='n', xlab="Number of genes in retrieval signature", ylab="Retrieval accuracy", lty=3, cex=0.7, col="green")
+lines(1:N, merged$RPKM, type="b", lty=2, cex=0.7, col="red")
+lines(1:N, merged$PREBS, type="b", lty=1, cex=0.7, col="blue")
+legend("bottomright",c("PREBS","Read counting", "MMSEQ"), lty=c(1,2,3), col=c("blue", "red", "green"))
 axis(side=1, at=c(1:N), labels=merged$filter_n)
 dev.off()
 
