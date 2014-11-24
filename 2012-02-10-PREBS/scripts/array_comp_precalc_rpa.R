@@ -7,7 +7,7 @@ input_path <- cargs[2]
 mmseqFile <- cargs[3]
 rpkmFile <- cargs[4]
 run_name <- cargs[5]
-mode <- cargs[6] # RMA or RPA
+
 
 load(array_expr_means_file)
 
@@ -60,13 +60,7 @@ merged <- merge(merged, rpkm_table, all.x=TRUE)
 
 # Save merged file
 
-if (mode == "rma") {
-  save(merged, file=paste(input_path,"/","merged_precalc.RData",sep=""))
-} else if (mode == "rpa") {
-  save(merged, file=paste(input_path,"/","merged_precalc_rpa.RData",sep=""))
-} else {
-  stop("Wronge mode. Should be `rma` or `rpa`")
-}
+save(merged, file=paste(input_path,"/","merged_precalc_rpa.RData",sep=""))
 
 # Plot
 

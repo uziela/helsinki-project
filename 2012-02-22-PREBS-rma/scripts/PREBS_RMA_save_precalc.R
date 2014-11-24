@@ -5,6 +5,7 @@ cargs <- commandArgs(trailingOnly = TRUE)
 
 output_dir <- cargs[1]
 prebs_rma_file <- cargs[2]
+mode <- cargs[3] # rma or rpa
 input_dirs <- cargs # input directories including merged_with_probes.RData files
 
 #prebs_rma_file <- paste(output_dir,"/PREBS_RMA.RData", sep="")
@@ -14,7 +15,16 @@ input_dirs <- cargs # input directories including merged_with_probes.RData files
 
 prebs_rma <- read.table(prebs_rma_file, head=T, check.names=F)
 
-for (i in 3:length(input_dirs)) {
+out_file <- ""
+if (mode == "rma") {
+  out_file <- "/merged_precalc.RData"
+} else if (mode == "rpa") {
+  out_file <- "/merged_precalc_rpa.RData"
+} else {
+  stop("ERROR: wrong mode, should be `rma` or `rpa`")
+}
+
+for (i in 4:length(input_dirs)) {
 	sample_name <- strsplit(input_dirs[i], "/")
 	sample_name <- sample_name[[1]][2]
 	
@@ -22,7 +32,7 @@ for (i in 3:length(input_dirs)) {
 	colnames(prebs_subset) <- c("PREBS_RMA","Gene_ID")
 	#print(head(prebs_subset))
 	
-	merged_file <- paste(input_dirs[i], "/merged_precalc.RData", sep="")
+	merged_file <- paste(input_dirs[i], out_file, sep="")
 	load(merged_file)
 	
 	merged_with_rma <- merge(merged, prebs_subset)

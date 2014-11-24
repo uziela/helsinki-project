@@ -7,7 +7,7 @@
 
 echo "runall.sh started with parameters: $*"
 
-if [ $# != 8 ] ; then
+if [ $# != 9 ] ; then
 	echo "
 Usage: 
 
@@ -22,6 +22,7 @@ Parameters:
 <percentage_upper> - upper percentage threshold*
 <percentage_lower> - lower percentage threshold*
 <PREBS_precalc_file>
+<sum-mode> - rma or rpa
 
 * - for example upper=0, lower=25 thresholds will yield the top 25% genes to be displayed. upper=25, lower=50 will yield genes which are between 25% and 50% quantile to be displayed.
 
@@ -47,6 +48,7 @@ mode=$5
 percentage_upper=$6
 percentage_lower=$7
 prebs_precalc=$8
+sum_mode=$9
 
 #collapse="0.3"
 
@@ -73,7 +75,7 @@ if [ ! -d $output_dir/plots ] ; then
 	#abs_path=`readlink -f $input_dir`
 	#ln -s $abs_path/*/plots/* $output_dir/plots
 	#cp $input_dir/*/plots/* $output_dir/plots
-	./scripts/PREBS_RMA_save_precalc.R $output_dir $prebs_precalc $input_dir/*
+	./scripts/PREBS_RMA_save_precalc.R $output_dir $prebs_precalc $sum_mode $input_dir/*
 	
 	./scripts/PREBS_stats.R $output_dir $mode $percentage_upper $percentage_lower $output_dir/*_merged.RData
 	./scripts/csv_to_html.py $output_dir/tables/prebs_stats.csv $output_dir/tables/prebs_stats.html "," "Absolute expression correlations"

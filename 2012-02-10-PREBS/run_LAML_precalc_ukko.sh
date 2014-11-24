@@ -14,5 +14,5 @@ SAMPLE=`ls -1 $input_dir | sed -n "$sample_n"p`
 
 #GAP=`cat $dataset_dir/gaps.txt | grep $SAMPLE | cut -f 2 -d " "`
 
-./runall_precalc.sh $input_dir/$SAMPLE $cdf $input_dir/$SAMPLE/$SAMPLE.gene.mmseq $dataset_dir/array_expr_means.RData PAIRED
+./runall_precalc.sh $input_dir/$SAMPLE $cdf $input_dir/$SAMPLE/$SAMPLE.gene.mmseq $dataset_dir PAIRED
 

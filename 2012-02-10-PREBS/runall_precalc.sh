@@ -17,7 +17,7 @@ Parameters:
 <input-dir> - Input directory (will also be used for output). Must have .CEL and .fastq files
 <cdf> - cdf name
 <mmseq-file> - mmseq file with gene expressions
-<microarray-expressions> - file containing microarray expressions (array_expr_means.R)
+<dataset-dir> - data set dir (should contain array_expr_means.RData and array_expr_means_rpa.RData)
 <paired> - PAIRED or UNPAIRED
 
 Commonly used CDFs:
@@ -32,10 +32,12 @@ fi
 input_dir=$1
 my_cdf=$2
 mmseq_file=$3
-array_expr_means=$4
+data_set_dir=$4
 pair_mode=$5
 mode="RANGES"
 
+array_expr_means=$data_set_dir/array_expr_means.RData
+array_expr_means_rpa=$data_set_dir/array_expr_means_rpa.RData
 
 cdf_package=`echo $my_cdf"cdf" | awk '{print tolower($0)}' | sed -e 's/_//g'`
 
@@ -132,9 +134,15 @@ if [ ! -f $input_dir/merged_precalc.RData ] ; then
 	echo "------------------- stage 7 -------------------"
 	echo "------------------- stage 7 -------------------" 1>&2
 	#mkdir $input_dir/plots
-	./scripts/array_comp_precalc.R $array_expr_means $input_dir $mmseq_file $input_dir/accepted_hits_precalc_counts.RData $run_name
-
-	#Rscript scripts/probe_plot.R $array_expr_means $input_dir $run_name $cdf_package
+	./scripts/array_comp_precalc.R $array_expr_means $input_dir $mmseq_file $input_dir/accepted_hits_precalc_counts.RData $run_name rma
 fi
+
+if [ ! -f $input_dir/merged_precalc_rpa.RData ] ; then
+	echo "------------------- stage 7a -------------------"
+	echo "------------------- stage 7a -------------------" 1>&2
+	#mkdir $input_dir/plots
+	./scripts/array_comp_precalc.R $array_expr_means_rpa $input_dir $mmseq_file $input_dir/accepted_hits_precalc_counts.RData $run_name rpa
+fi
+
 
 echo "runall.sh done."
