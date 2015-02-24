@@ -300,25 +300,42 @@ for (i in 1:(N_SAMPLES-1)) {
 			merged <- merged[is.finite(merged$prebs_log2fc),]
 			merged <- merged[is.finite(merged$rpkm_log2fc),]
 			merged <- merged[is.finite(merged$mmseq_log2fc),]
+			merged <- merged[is.finite(merged$array_log2fc),]
+
+      #print(head(merged))
 			mmseq_diff <- (merged$mmseq_log2fc > log2(1.5)) | (merged$mmseq_log2fc < -log2(1.5))
 			array_diff <- (merged$array_log2fc > log2(1.5)) | (merged$array_log2fc < -log2(1.5))
 			prebs_diff <- (merged$prebs_log2fc > log2(1.5)) | (merged$prebs_log2fc < -log2(1.5))
+			rpkm_diff <- (merged$rpkm_log2fc > log2(1.5)) | (merged$rpkm_log2fc < -log2(1.5))
 			
 			library(VennDiagram)
-			venn_input <- data.frame(MMSEQ=mmseq_diff, Microarray=array_diff, PREBS=prebs_diff)
+			venn_input <- data.frame(MMSEQ=mmseq_diff, Microarray=array_diff, PREBS=prebs_diff, RPKM=rpkm_diff)
 			area1 = nrow(venn_input[venn_input$MMSEQ==TRUE,])
 			area2 = nrow(venn_input[venn_input$Microarray==TRUE,])
 			area3 = nrow(venn_input[venn_input$PREBS==TRUE,])
+      area4 = nrow(venn_input[venn_input$RPKM==TRUE,])
 			n12 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$Microarray==TRUE,])
 			n23 = nrow(venn_input[venn_input$Microarray==TRUE & venn_input$PREBS==TRUE,])
 			n13 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$PREBS==TRUE,])
+			n14 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$RPKM==TRUE,])
+			n24 = nrow(venn_input[venn_input$Microarray==TRUE & venn_input$RPKM==TRUE,])
+			n34 = nrow(venn_input[venn_input$PREBS==TRUE & venn_input$RPKM==TRUE,])
 			n123 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$Microarray==TRUE & venn_input$PREBS==TRUE,])
+			n124 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$Microarray==TRUE & venn_input$RPKM==TRUE,])
+			n134 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$PREBS==TRUE & venn_input$RPKM==TRUE,])
+			n234 = nrow(venn_input[venn_input$Microarray==TRUE & venn_input$PREBS==TRUE & venn_input$RPKM==TRUE,])
+			n1234 = nrow(venn_input[venn_input$MMSEQ==TRUE & venn_input$Microarray==TRUE & venn_input$PREBS==TRUE & venn_input$RPKM==TRUE,])
 			
-			save(area1, area2, area3, n12, n23, n13, n123, file=paste(output_dir, "/plot-data/venn.RData", sep=""))
+			save(area1, area2, area3, area4, n12, n23, n13, n14, n24, n34, n123, n124, n134, n234, n1234, file=paste(output_dir, "/plot-data/venn.RData", sep=""))
 			pdf(paste(output_dir, "/plots-diff/venn.pdf", sep=""), height=10, width=10)		
 			venn.plot <- draw.triple.venn(area1, area2, area3, n12, n23, n13, n123, category = c("MMSEQ", "Microarray", "PREBS"), fill = c("green", "red", "blue"), lty = "blank", cex = 2, cat.cex = 2, cat.col = c("green", "red", "blue"), euler.d=TRUE, scaled=TRUE );
 			dev.off()
 			#my_venn(venn_input, paste(output_dir, "/plots-diff/venn", sep=""))
+			pdf(paste(output_dir, "/plots-diff/venn2.pdf", sep=""), height=10, width=10)	
+      #setEPS()
+			#postscript(paste(output_dir, "/plots-diff/venn2.eps", sep=""))		
+			venn.plot <- draw.quad.venn(area1, area2, area3, area4, n12, n13, n14, n23, n24, n34, n123, n124, n134, n234, n1234, category = c("MMSEQ", "Microarray", "PREBS", "RPKM"), fill = c("green", "red", "blue", "orange"), lty = "blank", cex = 2, cat.cex = 2, cat.col = c("green", "red", "blue", "orange"));
+			dev.off()
 		}
 	}
 }
